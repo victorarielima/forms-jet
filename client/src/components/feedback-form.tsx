@@ -32,6 +32,7 @@ export default function FeedbackForm() {
   const { toast } = useToast();
   const [flowData, setFlowData] = useState<FlowData[]>([]);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [systemNames, setSystemNames] = useState<Map<string, string>>(new Map());
   const [hasSearched, setHasSearched] = useState(false);
 
   const form = useForm<FeedbackFormData>({
@@ -140,6 +141,22 @@ export default function FeedbackForm() {
     } else {
       setSelectedItems(new Set(flowData.map(item => item.nodeId)));
     }
+  };
+
+  const handleSystemNameChange = (nodeId: string, name: string) => {
+    const newSystemNames = new Map(systemNames);
+    if (name.trim()) {
+      newSystemNames.set(nodeId, name);
+    } else {
+      newSystemNames.delete(nodeId);
+    }
+    setSystemNames(newSystemNames);
+  };
+
+  const areAllSystemNamesComplete = () => {
+    return Array.from(selectedItems).every(nodeId => 
+      systemNames.get(nodeId)?.trim()
+    );
   };
 
   return (

@@ -216,39 +216,53 @@ export default function FeedbackForm() {
                   </div>
                   <div className="space-y-2 max-h-96 overflow-y-auto">
                     {flowData.map((item, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleSelectItem(item.nodeId)}
-                        className={`w-full p-4 rounded-lg text-left transition-all duration-200 border-2 flex items-start gap-3 ${
-                          selectedItems.has(item.nodeId)
-                            ? "border-[var(--color-primary)] bg-[var(--color-primary-light)]"
-                            : "border-[var(--color-input-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-light)]"
-                        }`}
-                      >
-                        <div className="flex items-center mt-1 flex-shrink-0">
-                          <input
-                            type="checkbox"
-                            checked={selectedItems.has(item.nodeId)}
-                            onChange={(e) => {
-                              e.stopPropagation();
-                              handleSelectItem(item.nodeId);
-                            }}
-                            className="w-4 h-4 cursor-pointer accent-[var(--color-primary)]"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="px-2 py-1 bg-[var(--color-primary)] text-white text-xs font-bold rounded flex-shrink-0">
-                                {item.method}
-                              </span>
-                            </div>
-                            <p className="text-xs text-[var(--color-header)] font-medium break-all">
-                              {item.endpoint}
-                            </p>
+                      <div key={index} className="flex flex-col gap-2">
+                        <button
+                          onClick={() => handleSelectItem(item.nodeId)}
+                          className={`w-full p-4 rounded-lg text-left transition-all duration-200 border-2 flex items-start gap-3 ${
+                            selectedItems.has(item.nodeId)
+                              ? "border-[var(--color-primary)] bg-[var(--color-primary-light)]"
+                              : "border-[var(--color-input-border)] hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-light)]"
+                          }`}
+                        >
+                          <div className="flex items-center mt-1 flex-shrink-0">
+                            <input
+                              type="checkbox"
+                              checked={selectedItems.has(item.nodeId)}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                handleSelectItem(item.nodeId);
+                              }}
+                              className="w-4 h-4 cursor-pointer accent-[var(--color-primary)]"
+                            />
                           </div>
-                        </div>
-                      </button>
+                          <div className="flex-1 min-w-0">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="px-2 py-1 bg-[var(--color-primary)] text-white text-xs font-bold rounded flex-shrink-0">
+                                  {item.method}
+                                </span>
+                              </div>
+                              <p className="text-xs text-[var(--color-header)] font-medium break-all">
+                                {item.endpoint}
+                              </p>
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* System Name Input - Show when selected */}
+                        {selectedItems.has(item.nodeId) && (
+                          <div className="ml-7 px-4 py-2">
+                            <input
+                              type="text"
+                              value={systemNames.get(item.nodeId) || ""}
+                              onChange={(e) => handleSystemNameChange(item.nodeId, e.target.value)}
+                              placeholder="Nome do sistema"
+                              className="w-full px-3 py-2 text-sm border border-[var(--color-input-border)] rounded-lg focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] transition-all"
+                            />
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
 
@@ -257,7 +271,7 @@ export default function FeedbackForm() {
                     <Button
                       type="button"
                       onClick={() => sendDocumentation.mutate()}
-                      disabled={selectedItems.size === 0 || sendDocumentation.isPending}
+                      disabled={selectedItems.size === 0 || !areAllSystemNamesComplete() || sendDocumentation.isPending}
                       className="braseng-button submit-btn w-full"
                     >
                       {sendDocumentation.isPending ? (

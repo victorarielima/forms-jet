@@ -1,0 +1,14 @@
+node_modules
+dist
+.DS_Store
+*.tar.gz
+.env
+.env.local
+*.log
+
+# Backend removido - não é mais necessário
+server/
+uploads/
+drizzle.config.ts
+shared/
+.config/
